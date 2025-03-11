@@ -1,4 +1,3 @@
-# Importation des bibliothèques nécessaires
 from src.xss import XSSScanner
 import validators
 
