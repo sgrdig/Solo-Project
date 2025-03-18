@@ -14,8 +14,7 @@ And does a vefication  of the images and labels if there is none missing.
 
 """
 
-def convertXmlToYolo(xmlPath):
-
+def convertXmlToYolo(xmlPath, force_class_id=None):
     tree = ET.parse(xmlPath)
     root = tree.getroot()
 
@@ -35,14 +34,14 @@ def convertXmlToYolo(xmlPath):
         width = (xmax - xmin) / imageWidth
         height = (ymax - ymin) / imageHeight
 
-        yoloLines.append(f"0 {x_center:.6f} {y_center:.6f} {width:.6f} {height:.6f}")  # class_id=0 par défaut
+        class_id = force_class_id if force_class_id is not None else 0
+
+        yoloLines.append(f"{class_id} {x_center:.6f} {y_center:.6f} {width:.6f} {height:.6f}")
 
     return yoloLines
 
 
-
-def renameAndAdaptToYolo(dataDir, outputImageDir, outputLabelDir, prefix, trainRatio=0.8):
-
+def renameAndAdaptToYolo(dataDir, outputImageDir, outputLabelDir, prefix, trainRatio=0.8, force_class_id=None):
     trainImageDir = os.path.join(outputImageDir, "train")
     valImageDir = os.path.join(outputImageDir, "val")
     trainLabelDir = os.path.join(outputLabelDir, "train")
@@ -51,7 +50,7 @@ def renameAndAdaptToYolo(dataDir, outputImageDir, outputLabelDir, prefix, trainR
     for directory in [trainImageDir, valImageDir, trainLabelDir, valLabelDir]:
         os.makedirs(directory, exist_ok=True)
 
-    imageFiles = [f for f in os.listdir(dataDir) if f.endswith(".jpg") or f.endswith(".png")]
+    imageFiles = [f for f in os.listdir(dataDir) if f.endswith((".jpg", ".png"))]
     random.shuffle(imageFiles)
 
     splitIndex = int(len(imageFiles) * trainRatio)
@@ -74,12 +73,16 @@ def renameAndAdaptToYolo(dataDir, outputImageDir, outputLabelDir, prefix, trainR
             oldXmlPath = os.path.join(dataDir, baseName + ".xml")
 
             yoloAnnotations = []
+
             if os.path.exists(oldTxtPath):  
                 with open(oldTxtPath, "r") as file:
                     yoloAnnotations = file.readlines()
+                
+                if force_class_id is not None:
+                    yoloAnnotations = [f"{force_class_id} " + " ".join(line.strip().split()[1:]) for line in yoloAnnotations]
 
-            elif os.path.exists(oldXmlPath): 
-                yoloAnnotations = convertXmlToYolo(oldXmlPath)
+            elif os.path.exists(oldXmlPath):  
+                yoloAnnotations = convertXmlToYolo(oldXmlPath, force_class_id)
 
             if yoloAnnotations:
                 with open(newLabelPath, "w") as file:
@@ -88,7 +91,6 @@ def renameAndAdaptToYolo(dataDir, outputImageDir, outputLabelDir, prefix, trainR
             fileCounter += 1
 
     print(f"✅ {prefix} : {len(trainFiles)} train / {len(valFiles)} val")
-
 
 def verifyImageLabels(imageDir, labelDir):
     imageFiles = {os.path.splitext(f)[0] for f in os.listdir(imageDir) if f.endswith(('.jpg', '.png'))}
@@ -121,13 +123,24 @@ if __name__ == "__main__":
     # print("Uav done.")
     # print("Passing to Drones...")
 
-    # renameAndAdaptToYolo(
-    #     dataDir="datasets/rawData/Drones", 
-    #     outputImageDir="datasets/images",
-    #     outputLabelDir="datasets/labels", 
-    #     prefix="Drones"
-    # )
-    # print("Drones done.")
+    renameAndAdaptToYolo(
+    dataDir="datasets/rawData/Uav",
+    outputImageDir="datasets/images",
+    outputLabelDir="datasets/labels",
+    prefix="Uav"
+
+    )
+
+    renameAndAdaptToYolo(
+    dataDir="datasets/rawData/Drones",
+    outputImageDir="datasets/images",
+    outputLabelDir="datasets/labels",
+    prefix="Drone",
+    force_class_id=1
+)
+    print("uav done.")
+
+
     # print("Passing to Verification...")
     print(len(os.listdir("datasets/images/train")))
     print(len(os.listdir("datasets/labels/train")))
