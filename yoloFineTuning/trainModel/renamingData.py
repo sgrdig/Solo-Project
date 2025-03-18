@@ -9,16 +9,13 @@ import xml.etree.ElementTree as ET
 This File is used to rename images and labels for YOLOv8 fine-tuning.
 Rename images and labels to a common format as following.
 Do it for all images and labels in the trainModel/rawData folder.
+Also, adapt the labels to YOLOv8 format.
+And does a vefication  of the images and labels if there is none missing.
 
 """
 
-
-
 def convertXmlToYolo(xmlPath):
-    """
-    Convertit un fichier XML (format Pascal VOC) en format YOLO.
-    Retourne une liste de lignes YOLO.
-    """
+
     tree = ET.parse(xmlPath)
     root = tree.getroot()
 
@@ -33,7 +30,6 @@ def convertXmlToYolo(xmlPath):
         xmax = int(bbox.find("xmax").text)
         ymax = int(bbox.find("ymax").text)
 
-        # Convertir en format YOLO (normalisé)
         x_center = ((xmin + xmax) / 2) / imageWidth
         y_center = ((ymin + ymax) / 2) / imageHeight
         width = (xmax - xmin) / imageWidth
@@ -46,12 +42,7 @@ def convertXmlToYolo(xmlPath):
 
 
 def renameAndAdaptToYolo(dataDir, outputImageDir, outputLabelDir, prefix, trainRatio=0.8):
-    """
-    Gère le renommage, la conversion et le split entre train/val pour des fichiers .xml et .txt dans un même dossier.
-    """
-    # Print the number of files in the data directory
-    print(f"Number of files in {dataDir}: {len(os.listdir(dataDir))}")
-    # Création des répertoires de sortie
+
     trainImageDir = os.path.join(outputImageDir, "train")
     valImageDir = os.path.join(outputImageDir, "val")
     trainLabelDir = os.path.join(outputLabelDir, "train")
@@ -60,11 +51,9 @@ def renameAndAdaptToYolo(dataDir, outputImageDir, outputLabelDir, prefix, trainR
     for directory in [trainImageDir, valImageDir, trainLabelDir, valLabelDir]:
         os.makedirs(directory, exist_ok=True)
 
-    # Récupération des fichiers d'images
     imageFiles = [f for f in os.listdir(dataDir) if f.endswith(".jpg") or f.endswith(".png")]
     random.shuffle(imageFiles)
 
-    # Split train / validation
     splitIndex = int(len(imageFiles) * trainRatio)
     trainFiles, valFiles = imageFiles[:splitIndex], imageFiles[splitIndex:]
 
@@ -75,15 +64,12 @@ def renameAndAdaptToYolo(dataDir, outputImageDir, outputLabelDir, prefix, trainR
             baseName = os.path.splitext(fileName)[0]
             oldImagePath = os.path.join(dataDir, fileName)
 
-            # Déterminer les chemins
             newBaseName = f"{prefix}_{fileCounter:04d}"
             newImagePath = os.path.join(imgDir, newBaseName + ".jpg")
             newLabelPath = os.path.join(lblDir, newBaseName + ".txt")
 
-            # Copier l'image
             shutil.copy(oldImagePath, newImagePath)
 
-            # Vérifier si l'annotation existe sous format .txt ou .xml
             oldTxtPath = os.path.join(dataDir, baseName + ".txt")
             oldXmlPath = os.path.join(dataDir, baseName + ".xml")
 
