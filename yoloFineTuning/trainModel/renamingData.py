@@ -13,48 +13,6 @@ Do it for all images and labels in the trainModel/rawData folder.
 """
 
 
-# def renameAndAdaptToYolo(imageDir, outputImageDir, outputLabelDir, classId, prefix, trainRatio=0.8):
-#     trainImageDir = os.path.join(outputImageDir, "train")
-#     valImageDir = os.path.join(outputImageDir, "val")
-#     trainLabelDir = os.path.join(outputLabelDir, "train")
-#     valLabelDir = os.path.join(outputLabelDir, "val")
-
-#     for directory in [trainImageDir, valImageDir, trainLabelDir, valLabelDir]:
-#         os.makedirs(directory, exist_ok=True)
-
-#     imageFiles = [f for f in os.listdir(imageDir) if f.endswith(".jpg") or f.endswith(".png")]
-#     random.shuffle(imageFiles)
-
-#     splitIndex = int(len(imageFiles) * trainRatio)
-#     trainFiles, valFiles = imageFiles[:splitIndex], imageFiles[splitIndex:]
-
-#     fileCounter = 1
-#     for dataset, fileList, imgDir, lblDir in [("train", trainFiles, trainImageDir, trainLabelDir), 
-#                                                ("val", valFiles, valImageDir, valLabelDir)]:
-#         for fileName in tqdm.tqdm(fileList, desc=f"Processing {prefix} -> {dataset}"):
-#             baseName = os.path.splitext(fileName)[0]
-#             oldImagePath = os.path.join(imageDir, fileName)
-#             oldLabelPath = os.path.join(imageDir, baseName + ".txt")
-
-#             newBaseName = f"{prefix}_{fileCounter:04d}"
-#             newImagePath = os.path.join(imgDir, newBaseName + ".jpg")
-#             newLabelPath = os.path.join(lblDir, newBaseName + ".txt")
-
-#             shutil.copy(oldImagePath, newImagePath)
-
-#             if os.path.exists(oldLabelPath):
-#                 with open(oldLabelPath, "r") as file:
-#                     lines = file.readlines()
-
-#                 newLines = [f"{classId} " + " ".join(line.strip().split()[1:]) for line in lines]
-
-#                 with open(newLabelPath, "w") as file:
-#                     file.write("\n".join(newLines) + "\n")
-
-#             fileCounter += 1
-
-#     print(f"✅ {prefix} : {len(trainFiles)} train / {len(valFiles)} val")
-
 
 def convertXmlToYolo(xmlPath):
     """
