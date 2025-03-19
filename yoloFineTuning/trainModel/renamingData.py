@@ -113,15 +113,7 @@ def verifyImageLabels(imageDir, labelDir):
 
 
 if __name__ == "__main__":
-    # renameAndAdaptToYolo(
-    #     dataDir="datasets/rawData/Uav", 
-    #     outputImageDir="datasets/images",
-    #     outputLabelDir="datasets/labels", 
-    #     prefix="Uav"
-    # )
 
-    # print("Uav done.")
-    # print("Passing to Drones...")
 
     renameAndAdaptToYolo(
     dataDir="datasets/rawData/Uav",
