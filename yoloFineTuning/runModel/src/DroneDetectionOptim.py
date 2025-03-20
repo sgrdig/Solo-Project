@@ -3,7 +3,7 @@ from ultralytics import YOLO
 import os
 
 def drone_detection():
-    model = YOLO("src/drone/yolov8n-drone.pt")
+    model = YOLO("src/models/VsModel_32_640.pt")
     model.fuse()
     model  = model.cpu()
 

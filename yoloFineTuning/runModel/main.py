@@ -1,4 +1,5 @@
-from src.DroneDetectionOptim import drone_detection
+from src.droneAndUavOptim import droneDetection
 
 if __name__ == "__main__":
-    drone_detection()
+    print("Starting Camera" ,flush=False)
+    droneDetection()
