@@ -1,0 +1,17 @@
+yoloFineTuning/trainModel/datasets/images/train
+yoloFineTuning/trainModel/datasets/images/val
+yoloFineTuning/trainModel/datasets/labels/train
+yoloFineTuning/trainModel/datasets/labels/val
+yoloVenv
+.vscode
+yoloFineTuning/trainModel/datasets/rawData
+yoloFineTuning/trainModel/rawData
+yoloFineTuning/trainModel/__pycache__
+yoloFineTuning/trainModel/yoloFineTuning/models
+.env
+yoloFineTuning/trainModel/models
+yoloFineTuning/trainModel/runs
+DataVaultCrypto/backend/__pycache__/app.cpython-39.pyc
+DataVaultCrypto/backend/__pycache__/cryptoUtils.cpython-39.pyc
+DataVaultCrypto/private_key.pem
+DataVaultCrypto/public_key.pem
